@@ -2,15 +2,16 @@ import java.util.*;
 
 class Solution {
     public String solution(String[] participant, String[] completion) {
+        int index;
         Arrays.sort(participant);
         Arrays.sort(completion);
         
-        for (int index = 0; index < completion.length; index++) {
+        for (index = 0; index < completion.length; index++) {
             if (!(participant[index].equals(completion[index]))) {
-                return participant[index];
+                break;
             }
         }
         
-        return participant[participant.length - 1];
+        return participant[index];
     }
 }
