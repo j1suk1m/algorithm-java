@@ -1,11 +1,11 @@
+import java.util.*;
+
 class Solution {
     public int solution(String num_str) {
         int answer = 0;
-        char[] digits = num_str.toCharArray();
+        String[] digits = num_str.split("");
         
-        for (char digit : digits) {
-            answer += (digit - '0');
-        }
+        answer = Arrays.stream(digits).mapToInt(Integer::parseInt).sum();
         
         return answer;
     }
