@@ -10,6 +10,6 @@ class Solution {
             }
         }
         
-        return answer.toArray(new String[0]);
+        return answer.toArray(String[]::new);
     }
 }
