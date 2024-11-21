@@ -1,10 +1,7 @@
+import java.util.*;
+
 class Solution {
     public int[] solution(int[] num_list, int n) {
-        int[] answer = new int[n];
-        
-        // source, sourcePos, dest, destPos, length
-        System.arraycopy(num_list, 0, answer, 0, n);
-        
-        return answer;
+        return Arrays.copyOf(num_list, n);
     }
 }
