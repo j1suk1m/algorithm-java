@@ -1,15 +1,43 @@
-import java.util.*;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.StringTokenizer;
 
 class Main {
-    public static int dfs(ArrayList<ArrayList<Integer>> graph, boolean[] visited, int current) {
+    private static ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+    private static boolean[] visited;
+
+    private static int bfs(int start) {
+        int count = 0;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(start);
+        visited[start] = true;
+
+        while (!queue.isEmpty()) {
+            int current = queue.poll();
+
+            for (int next : graph.get(current)) {
+                if (!visited[next]) {
+                    queue.add(next);
+                    visited[next] = true;
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private static int dfs(int current) {
         int count = 1;
         visited[current] = true;
 
-        // 직접 연결된 컴퓨터 중 방문하지 않은 노드 방문
         for (int next : graph.get(current)) {
-            if (visited[next] == false) {
-                count += dfs(graph, visited, next);
+            if (!visited[next]) {
+                count += dfs(next);
             }
         }
 
@@ -22,26 +50,23 @@ class Main {
         int numOfComputers = Integer.parseInt(br.readLine());
         int numOfPairs = Integer.parseInt(br.readLine());
 
-        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
-        boolean[] visited = new boolean[numOfComputers + 1];
-
         for (int i = 0; i < numOfComputers + 1; i++) {
             graph.add(new ArrayList<>());
         }
 
         for (int i = 0; i < numOfPairs; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
+            String input = br.readLine();
+            StringTokenizer st = new StringTokenizer(input, " ");
 
             int computer1 = Integer.parseInt(st.nextToken());
             int computer2 = Integer.parseInt(st.nextToken());
 
-            // 양방향 연결 관계 저장
             graph.get(computer1).add(computer2);
             graph.get(computer2).add(computer1);
         }
 
-        int answer = dfs(graph, visited, 1) - 1; // 자기 자신 제외
+        visited = new boolean[numOfComputers + 1];
 
-        System.out.println(answer);
+        System.out.println(dfs(1) - 1);
     }
 }
