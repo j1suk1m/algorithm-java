@@ -3,7 +3,6 @@ import java.util.*;
 
 class Main {
     private static int[] apples; // 각 정점에 대한 사과 개수
-    private static boolean[] visited;
     private static ArrayList<ArrayList<Integer>> graph = new ArrayList<>(); // 인접 리스트
 
     private static int dfs(int current, int depth, int k) {
@@ -12,12 +11,9 @@ class Main {
         }
 
         int count = apples[current];
-        visited[current] = true;
 
         for (int next : graph.get(current)) {
-            if (!visited[next]) {
-                count += dfs(next, depth + 1, k);
-            }
+            count += dfs(next, depth + 1, k);
         }
 
         return count;
@@ -44,7 +40,6 @@ class Main {
         }
 
         apples = Arrays.stream(br.readLine().split(" ")).mapToInt(Integer::parseInt).toArray();
-        visited = new boolean[n];
 
         System.out.println(dfs(0, 0, k));
     }
