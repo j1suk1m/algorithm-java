@@ -16,29 +16,8 @@ class Main {
         return (int)alphabet - (int)'A';
     }
 
-    // 인접한 칸 중에서 이동 가능한 칸이 있는지 확인
-    private static boolean canMove(int x, int y) {
-        for (int i = 0; i < 4; i++) {
-            int nx = x + dx[i];
-            int ny = y + dy[i];
-
-            if ((0 <= nx && nx < R && 0 <= ny && ny < C)
-                    && !visited[nx][ny]
-                    && !included[getIndexFromAlphabet(board[nx][ny])]) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     private static void dfs(int x, int y, int depth) {
-
-        // 현재 칸에서 이동할 수 없는 경우
-        if (!canMove(x, y)) {
-            answer = Math.max(answer, depth);
-            return;
-        }
+        answer = Math.max(answer, depth);
 
         for (int i = 0; i < 4; i++) {
             int nx = x + dx[i];
