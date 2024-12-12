@@ -25,10 +25,10 @@ class Main {
         int n = Integer.parseInt(br.readLine());
 
         for (int i = 0; i < n; i++) {
-            String[] input = br.readLine().split(" ");
+            String[] input = br.readLine().split(" is ");
 
             int a = input[0].charAt(0) - 'a';
-            int b = input[2].charAt(0) - 'a';
+            int b = input[1].charAt(0) - 'a';
 
             graph[a][b] = true;
         }
@@ -38,10 +38,10 @@ class Main {
         int m = Integer.parseInt(br.readLine());
 
         for (int i = 0; i < m; i++) {
-            String[] input = br.readLine().split(" ");
+            String[] input = br.readLine().split(" is ");
 
             int p = input[0].charAt(0) - 'a';
-            int q = input[2].charAt(0) - 'a';
+            int q = input[1].charAt(0) - 'a';
 
             if (graph[p][q]) {
                 System.out.println("T");
