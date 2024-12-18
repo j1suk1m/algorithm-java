@@ -10,6 +10,6 @@ class Solution {
             return 2 * (a + b);
         }
         
-        return Math.max(a, b) - Math.min(a, b);
+        return Math.abs(a - b);
     }
 }
