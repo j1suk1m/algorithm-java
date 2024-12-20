@@ -6,6 +6,7 @@ class Solution {
             for (int j = 0; j < s2.length; j++) {
                 if (s1[i].equals(s2[j])) {
                     answer++;
+                    break;
                 }
             }
         }
