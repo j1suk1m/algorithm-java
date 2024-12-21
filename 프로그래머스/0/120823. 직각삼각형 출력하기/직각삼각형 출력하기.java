@@ -5,10 +5,9 @@ public class Solution {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         
         int n = Integer.parseInt(br.readLine());
-        String symbol = "*";
         
         for (int i = 1; i <= n; i++) {
-            System.out.println(symbol.repeat(i));
+            System.out.println("*".repeat(i));
         }
     }
 }
