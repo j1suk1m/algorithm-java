@@ -1,18 +1,13 @@
-import java.util.*;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.Arrays;
 
 class Solution {
     public int solution(int[] nums) {
-        int answer = nums.length / 2;
-        Set<Integer> uniqueNums = new HashSet<Integer>();
+        Set<Integer> uniqueNums = Arrays.stream(nums)
+                                        .boxed()
+                                        .collect(Collectors.toSet());
         
-        for (int i = 0; i < nums.length; i++) {
-            uniqueNums.add(nums[i]);
-        }
-        
-        if (uniqueNums.size() < nums.length / 2) {
-            answer = uniqueNums.size();
-        }
-        
-        return answer;
+        return Math.min(uniqueNums.size(), nums.length / 2);
     }
 }
