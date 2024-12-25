@@ -14,9 +14,9 @@ class Solution {
             counts.put(player, counts.get(player) - 1);
         }
         
-        for (String player : counts.keySet()) {
-            if (counts.get(player) == 1) {
-                answer = player;
+        for (Map.Entry<String, Integer> entry : counts.entrySet()) {
+            if (entry.getValue() == 1) {
+                answer = entry.getKey();
                 break;
             }
         }
