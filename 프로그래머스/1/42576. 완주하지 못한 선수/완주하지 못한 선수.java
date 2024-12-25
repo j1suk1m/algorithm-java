@@ -1,17 +1,26 @@
-import java.util.*;
+import java.util.Map;
+import java.util.HashMap;
 
 class Solution {
     public String solution(String[] participant, String[] completion) {
-        int index;
-        Arrays.sort(participant);
-        Arrays.sort(completion);
+        Map<String, Integer> counts = new HashMap<>();
+        String answer = "";
         
-        for (index = 0; index < completion.length; index++) {
-            if (!(participant[index].equals(completion[index]))) {
+        for (String player : participant) {
+            counts.put(player, counts.getOrDefault(player, 0) + 1);
+        }
+        
+        for (String player : completion) {
+            counts.put(player, counts.get(player) - 1);
+        }
+        
+        for (String player : counts.keySet()) {
+            if (counts.get(player) == 1) {
+                answer = player;
                 break;
             }
         }
         
-        return participant[index];
+        return answer;
     }
 }
