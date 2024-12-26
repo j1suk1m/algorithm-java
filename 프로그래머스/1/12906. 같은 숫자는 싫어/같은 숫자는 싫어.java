@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class Solution {
@@ -12,12 +14,8 @@ public class Solution {
             }
         }
         
-        int[] answer = new int[stack.size()];
-        
-        for (int i = answer.length - 1; i >= 0; i--) {
-            answer[i] = stack.pop();
-        }
+        List<Integer> answer = new ArrayList<>(stack);
 
-        return answer;
+        return answer.stream().mapToInt(i -> i).toArray();
     }
 }
