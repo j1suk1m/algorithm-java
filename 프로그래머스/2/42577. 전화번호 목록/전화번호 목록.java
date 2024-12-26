@@ -1,29 +1,19 @@
-import java.util.*;
+import java.util.Set;
+import java.util.HashSet;
 
 class Solution {
-    private static boolean isPrefix(String current, String next) {
-        for  (int j = 0; j < current.length(); j++) {
-            if (current.charAt(j) != next.charAt(j)) {
-                return false;
-            }                
-        }
-
-        return true;
-    }
-    
-    public boolean solution(String[] phone_book) {
-        Arrays.sort(phone_book);
+    public boolean solution(String[] phoneBook) {
+        Set<String> set = new HashSet<>();
         
-        for (int i = 0; i < phone_book.length - 1; i++) {
-            String current = phone_book[i];
-            String next = phone_book[i + 1];
-            
-            if (current.length() >= next.length()) {
-                continue;
-            }
-            
-            if (isPrefix(current, next)) {
-                return false;
+        for (String phoneNumber : phoneBook) {
+             set.add(phoneNumber);
+        }
+        
+        for (String phoneNumber : phoneBook) {
+            for (int i = 1; i < phoneNumber.length(); i++) {
+                if (set.contains(phoneNumber.substring(0, i))) {
+                    return false;
+                }
             }
         }
         
