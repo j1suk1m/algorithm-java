@@ -1,4 +1,3 @@
-import java.util.EmptyStackException;
 import java.util.Stack;
 
 class Solution {
@@ -7,15 +6,15 @@ class Solution {
         
         for (int i = 0; i < s.length(); i++) {
             char current = s.charAt(i);
-            
-            try {
-                if (current == '(') {
-                    stack.push(current);
+
+            if (current == '(') {
+                stack.push(current);
+            } else {
+                if (stack.empty()) {
+                    return false;
                 } else {
                     stack.pop();
                 }
-            } catch (EmptyStackException e) {
-                return false;
             }
         }
         
