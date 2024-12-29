@@ -22,7 +22,7 @@ class Task {
 }
 
 class Solution {
-    private static Queue<Task> queue = new LinkedList();
+    private static Queue<Task> queue = new LinkedList<>();
     private static List<Integer> answer = new ArrayList<>();
 
     public int[] solution(int[] progresses, int[] speeds) {
