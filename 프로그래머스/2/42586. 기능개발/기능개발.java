@@ -27,7 +27,7 @@ class Solution {
 
     public int[] solution(int[] progresses, int[] speeds) {
         int deploymentOrder = -1;
-        int day = 0;
+        int passedDays = 0;
         
         init(progresses, speeds);
         
@@ -36,9 +36,9 @@ class Solution {
             int progress = task.getProgress();
             int speed = task.getSpeed();
             
-            if (!isDeployable(progress, speed, day)) {
+            if (!isDeployable(progress, speed, passedDays)) {
                 deploymentOrder++;
-                day = (int) Math.ceil((double) (100 - progress) / speed);
+                passedDays = calculatePassedDays(progress, speed);
             }
             
             deploy(deploymentOrder);
@@ -55,8 +55,12 @@ class Solution {
         }
     }
     
-    private boolean isDeployable(int progress, int speed, int day) {
-        return progress + (speed * day) >= 100;
+    private boolean isDeployable(int progress, int speed, int passedDays) {
+        return progress + (speed * passedDays) >= 100;
+    }
+    
+    private int calculatePassedDays(int progress, int speed) {
+        return (int) Math.ceil((double) (100 - progress) / speed);
     }
     
     private void deploy(int deploymentOrder) {
