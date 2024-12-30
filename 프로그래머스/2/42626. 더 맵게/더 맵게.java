@@ -1,45 +1,28 @@
-import java.util.*;
-
-class Food implements Comparable<Food> {
-    private final int scoville;
-    
-    Food(int scoville) {
-        this.scoville = scoville;
-    }
-    
-    public int getScoville() {
-        return scoville;
-    }
-    
-    @Override
-    public int compareTo(Food other) {
-        return Integer.compare(this.scoville, other.getScoville());
-    }
-}
+import java.util.PriorityQueue;
 
 class Solution {
     public int solution(int[] scovilles, int K) {
-        PriorityQueue<Food> foods = new PriorityQueue<>();
-        int answer = 0;
+        PriorityQueue<Integer> priorityQueue = new PriorityQueue<>();
+        int mixCount = 0; // 섞은 횟수
         
         for (int scoville : scovilles) {
-            foods.offer(new Food(scoville));
+            priorityQueue.offer(scoville);
         }
         
-        while (foods.size() >= 2) {
-            Food food1 = foods.poll();
-            Food food2 = foods.poll();
+        while (priorityQueue.size() >= 2) {
+            int minScoville1 = priorityQueue.poll(); // 가장 맵지 않은 음식의 스코빌 지수
+            int minScoville2 = priorityQueue.poll(); // 두 번째로 맵지 않은 음식의 스코빌 지수
             
-            if (food1.getScoville() >= K) {
-                return answer;
+            if (minScoville1 >= K) {
+                return mixCount;
             }
             
-            foods.offer(new Food(food1.getScoville() + 2 * food2.getScoville()));
-            answer++;
+            priorityQueue.offer(minScoville1 + 2 * minScoville2); // 가장 맵지 않은 두 음식 혼합
+            mixCount++; // 섞은 횟수 갱신
         }
         
-        if (foods.poll().getScoville() >= K) {
-            return answer;
+        if (priorityQueue.poll() >= K) {
+            return mixCount;
         } else {
             return -1;
         }
