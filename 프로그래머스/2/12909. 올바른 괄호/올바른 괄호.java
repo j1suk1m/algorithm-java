@@ -7,15 +7,15 @@ class Solution {
     
         for (int i = 0; i < s.length(); i++) {
             char current = s.charAt(i);
-      
-            try {
-                if (current == '(') {
-                    stack.push(current);
-                } else {
-                    stack.pop();
+        
+            if (current == '(') {
+                stack.push(current);
+            } else {
+                if (stack.isEmpty()) {
+                    return false;
                 }
-            } catch (EmptyStackException e) {
-                return false;
+                
+                stack.pop();
             }
         }
     
