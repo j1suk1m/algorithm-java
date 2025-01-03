@@ -7,18 +7,18 @@ class Solution {
     
         for (int i = 0; i < s.length(); i++) {
             char current = s.charAt(i);
-        
-            if (current == '(') {
-                stack.push(current);
-            } else {
-                if (stack.isEmpty()) {
-                    return false;
+      
+            try {
+                if (current == '(') { 
+                    stack.push(current); // 열린 괄호는 push
+                } else {
+                    stack.pop(); // 닫힌 괄호는 pop
                 }
-                
-                stack.pop();
+            } catch (EmptyStackException e) {
+                return false;
             }
         }
-    
+
         return stack.isEmpty();
     }
 }
