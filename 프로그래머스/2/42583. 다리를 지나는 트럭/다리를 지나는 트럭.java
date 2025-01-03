@@ -9,26 +9,24 @@ class Solution {
         int answer = 0;
                 
         for (int currentWeight : truckWeights) {
-            while (true) {
-                if (isPassable(currentWeight, bridgeLength, maxWeight)) { // 건널 수 있는 경우
-                    bridge.offer(currentWeight); // 다리 위에 오르기
-                    totalWeightOnBridge += currentWeight; // 전체 무게 갱신
-                    answer++; 
-                    break;
-                } 
-                
+            while (!(isPassable(currentWeight, bridgeLength, maxWeight))) { // 다리를 건널 수 있을 때까지                
                 if (bridge.size() == bridgeLength) { // 다리에 올라갈 자리가 없는 경우
-                    totalWeightOnBridge -= bridge.poll(); // 다리를 완전히 지남
+                    totalWeightOnBridge -= bridge.poll(); // 다리를 완전히 지난 트럭을 제거
                 } else { // 무게 제한으로 건널 수 없는 경우
                     bridge.offer(0); // 무게가 0인 트럭 추가
                     answer++;
                 }
             }
+            
+            bridge.offer(currentWeight); // 다리 위에 오르기
+            totalWeightOnBridge += currentWeight; // 다리 위의 전체 무게 추가
+            answer++;       
         }
             
         return answer + bridgeLength; // 마지막 트럭이 다리를 건너는 데 걸리는 시간 추가
     } 
     
+    // 다리를 건널 수 있는지 확인
     private static boolean isPassable(int currentWeight, int bridgeLength, int maxWeight) {
         return (bridge.size() + 1 <= bridgeLength && totalWeightOnBridge + currentWeight <= maxWeight);
     }
