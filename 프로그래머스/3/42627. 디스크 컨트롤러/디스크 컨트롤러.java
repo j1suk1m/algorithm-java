@@ -33,6 +33,6 @@ class Solution {
             }
         }
         
-        return (int) sumOfTurnaroundTime / jobs.length;
+        return sumOfTurnaroundTime / jobs.length;
     }
 }
