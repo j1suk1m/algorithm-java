@@ -13,10 +13,10 @@ class Solution {
         
         // 두 숫자 문자열을 연결했을 때 더 큰 숫자를 만들 수 있는 순서대로 정렬
         Arrays.sort(numberStrings, (numberString1, numberString2) -> {
-            int combinedResult1 = Integer.parseInt(numberString1 + numberString2);
-            int combinedResult2 = Integer.parseInt(numberString2 + numberString1);
+            String combinedResult1 = numberString1 + numberString2;
+            String combinedResult2 = numberString2 + numberString1;
             
-            return Integer.compare(combinedResult2, combinedResult1);
+            return combinedResult2.compareTo(combinedResult1);
         });
         
         // String 배열을 하나의 문자열로 연결해 반환
