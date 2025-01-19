@@ -7,10 +7,10 @@ class Solution {
         Arrays.sort(citations);
         
         for (int i = citationCount - 1; i >= 1; i--) {
-            int rank = citationCount - i;
+            int h = citationCount - i;
             
-            if (citations[i - 1] <= rank && rank <= citations[i]) {
-                return rank;
+            if (citations[i - 1] <= h && h <= citations[i]) {
+                return h;
             }
         }
         
