@@ -1,26 +1,17 @@
-import java.util.Arrays;
-
 class Solution {
     public int solution(int[][] sizes) {
-        int answer = 0;
-        int globalLongest = 0;
-        int globalShortest = 0;
-
-        for (int i = 0; i < sizes.length; i++) {
-            int localLongest = Arrays.stream(sizes[i]).max().getAsInt();
-            int localShortest = Arrays.stream(sizes[i]).min().getAsInt();
+        int maxOfShortLength = 0;
+        int maxOfLongLength = 0;
+        
+        for (int[] size : sizes) {  
+            int shortLength = Math.min(size[0], size[1]);
+            int longLength = Math.max(size[0], size[1]);
             
-            if (globalLongest < localLongest) {
-                globalLongest = localLongest;
-            }
-            
-            if (globalShortest < localShortest) {
-                globalShortest = localShortest;
-            }
+            // 최댓값 갱신
+            maxOfShortLength = Math.max(maxOfShortLength, shortLength); 
+            maxOfLongLength = Math.max(maxOfLongLength, longLength); 
         }
         
-        answer = globalShortest * globalLongest;
-        
-        return answer;
+        return maxOfShortLength * maxOfLongLength;
     }
 }
