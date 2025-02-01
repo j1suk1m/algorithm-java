@@ -3,7 +3,7 @@ import java.util.List;
 
 class Student {
     private final int id; // 번호
-    private final int[] responses; // 풀이한 답변
+    private final int[] responses; // 풀이한 답변의 패턴
     private int score = 0; // 점수
     
     public Student(int id, int[] responses) {
@@ -11,10 +11,17 @@ class Student {
         this.responses = responses;
     }
     
-    // 한 문제 채점
-    public void calculateScore(int problemNumber, int answer) {
-        if (responses[problemNumber % responses.length] == answer) {
-            score++;
+    // 채점
+    public void calculateScore(int[] answers) {
+        int responsesLength = responses.length;
+        
+        for (int i = 0; i < answers.length; i++) {
+            int answer = answers[i]; // 실제 정답
+            int response = responses[i % responsesLength]; // 학생 답변
+            
+            if (response == answer) {
+                score++;
+            }
         }
     } 
     
@@ -34,10 +41,9 @@ class Solution {
     public int[] solution(int[] answers) {
         initStudents(); // 학생 리스트 초기화
         
-        for (int problemNumber = 0; problemNumber < answers.length; problemNumber++) {
-            for (Student student : students) {
-                student.calculateScore(problemNumber, answers[problemNumber]); // 채점
-            }
+        // 채점
+        for (Student student : students) {
+            student.calculateScore(answers); 
         }
         
         findStudentsWithTopScore(); // 가장 많은 문제를 맞힌 학생 조회
@@ -69,6 +75,6 @@ class Solution {
         students.stream()
                 .filter(student -> student.getScore() == topScore)
                 .map(Student::getId)
-                .forEach(answer::add); // answer 리스트에 추가
+                .forEach(answer::add); // answer에 추가
     }
 }
