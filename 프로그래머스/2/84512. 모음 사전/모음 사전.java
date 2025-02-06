@@ -27,8 +27,8 @@ class Solution {
             return;
         }
         
-        for (int i = 0; i < vowels.length; i++) {
-            temp.append(vowels[i]);
+        for (String vowel : vowels) {
+            temp.append(vowel);
             backtrack(temp, maxLength);
             temp.deleteCharAt(temp.length() - 1);
         }
