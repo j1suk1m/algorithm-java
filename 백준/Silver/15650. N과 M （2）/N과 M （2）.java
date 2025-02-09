@@ -21,12 +21,12 @@ class Main {
         visited = new boolean[N + 1];
 
         // 백트래킹
-        backtrack(0, 0);
+        backtrack(0, 1);
 
         System.out.println(answer);
     }
 
-    private static void backtrack(int depth, int previousNumber) {
+    private static void backtrack(int depth, int startNumber) {
 
         // 수열의 길이가 M이 된 경우
         if (depth == M) {
@@ -38,11 +38,11 @@ class Main {
             return;
         }
 
-        for (int number = 1; number <= N; number++) {
-            if (!visited[number] && number > previousNumber) {
+        for (int number = startNumber; number <= N; number++) {
+            if (!visited[number]) {
                 visited[number] = true;
                 permutation[depth] = number;
-                backtrack(depth + 1, number);
+                backtrack(depth + 1, number + 1);
                 visited[number] = false;
             }
         }
