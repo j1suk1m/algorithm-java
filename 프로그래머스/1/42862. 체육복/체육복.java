@@ -6,11 +6,12 @@ class Solution {
     
     // 인덱스: 학생 번호
     // 해당 인덱스의 값: 여분 체육복 소지 여부
-    private final boolean[] isUniformProvider = new boolean[32];
+    private boolean[] isUniformProvider;
     
     public int solution(int n, int[] lost, int[] reserve) {
         int answer = n; // 체육 수업을 들을 수 있는 학생의 수
-            
+        isUniformProvider = new boolean[n + 2];
+        
         // 오름차순 정렬
         Arrays.sort(lost);
         Arrays.sort(reserve);
