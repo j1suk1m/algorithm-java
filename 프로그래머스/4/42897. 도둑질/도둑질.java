@@ -11,9 +11,10 @@ class Solution {
         initTable(money, houseCount);
         
         // 기저 조건을 명시한다.
-        table[0][0] = money[0];
-        table[0][1] = money[0];
-        table[1][0] = 0;
+        table[0][0] = money[0]; // 첫번째 집에서 도둑질한다.
+        table[0][1] = money[0]; // 인접한 두번째 집에서는 도둑질하지 못한다.
+        
+        table[1][0] = 0; // 첫번째 집을 제외한다.
         table[1][1] = money[1];
         
         // 다이나믹 프로그래밍을 실행하며 테이블을 채운다.
