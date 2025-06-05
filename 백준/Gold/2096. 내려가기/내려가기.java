@@ -1,47 +1,33 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
+import java.util.StringTokenizer;
 
 public class Main {
-    private static final int COLUMN = 3;
+    private static final BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+    private static final int COLS = 3;
+    private static int rows;
+    private static int[][] numbers;
+    private static int[] prevMax;
+    private static int[] prevMin;
 
     public static void main(String[] args) throws IOException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+        rows = Integer.parseInt(reader.readLine());
+        numbers = new int[rows][COLS];
 
-        int N = Integer.parseInt(reader.readLine());
-        int[][] numbers = new int[N][COLUMN];
+        // 전체 숫자 테이블을 입력받아 초기화한다.
+        initNumberTable();
 
-        // 전체 숫자표를 입력받는다.
-        for (int i = 0; i < N; i++) {
-            String[] row = reader.readLine().split(" ");
-            
-            for (int j = 0; j < COLUMN; j++) {
-                numbers[i][j] = Integer.parseInt(row[j]);
-            }
-        }
+        prevMax = numbers[0].clone();
+        prevMin = numbers[0].clone();
 
-        int[] prevMax = Arrays.copyOf(numbers[0], COLUMN);
-        int[] prevMin = Arrays.copyOf(numbers[0], COLUMN);
+        for (int rowIndex = 1; rowIndex < rows; rowIndex++) {
+            // 현재 행에서 왼쪽 숫자, 가운데 숫자, 오른쪽 숫자를 선택했을 때의 최대 및 최소 점수를 계산한다.
+            int[] currMax = calculateCurrentMax(rowIndex);
+            int[] currMin = calculateCurrentMin(rowIndex);
 
-        // 두 번째 줄부터 출발해 최대 점수와 최소 점수를 계산한다.
-        for (int i = 1; i < N; i++) {
-            int left = numbers[i][0];
-            int center = numbers[i][1];
-            int right = numbers[i][2];
-
-            int[] currMax = new int[] {
-                Math.max(prevMax[0], prevMax[1]) + left,
-                Math.max(Math.max(prevMax[0], prevMax[1]), prevMax[2]) + center,
-                Math.max(prevMax[1], prevMax[2]) + right
-            };
-
-            int[] currMin = new int[] {
-                Math.min(prevMin[0], prevMin[1]) + left,
-                Math.min(Math.min(prevMin[0], prevMin[1]), prevMin[2]) + center,
-                Math.min(prevMin[1], prevMin[2]) + right
-            };
-
+            // 다음 행으로 이동하기 위해 배열을 갱신한다.
+            // 다음 루프에서 currMax, currMin이 초기화되므로 배열의 메모리 주소를 넘겨도 된다.
             prevMax = currMax;
             prevMin = currMin;
         }
@@ -50,5 +36,42 @@ public class Main {
         int minScore = Math.min(Math.min(prevMin[0], prevMin[1]), prevMin[2]);
 
         System.out.println(maxScore + " " + minScore);
+    }
+
+    // 전체 숫자 테이블을 입력받아 초기화한다.
+    private static void initNumberTable() throws IOException {
+        for (int i = 0; i < rows; i++) {
+            StringTokenizer st = new StringTokenizer(reader.readLine());
+
+            for (int j = 0; j < COLS; j++) {
+                numbers[i][j] = Integer.parseInt(st.nextToken());
+            }
+        }
+    }
+
+    // 현재 행에서 왼쪽 숫자, 가운데 숫자, 오른쪽 숫자를 선택했을 때의 최대 점수를 각각 계산한다.
+    private static int[] calculateCurrentMax(int rowIndex) {
+        int left = numbers[rowIndex][0];
+        int center = numbers[rowIndex][1];
+        int right = numbers[rowIndex][2];
+
+        return new int[] {
+            Math.max(prevMax[0], prevMax[1]) + left,
+            Math.max(Math.max(prevMax[0], prevMax[1]), prevMax[2]) + center,
+            Math.max(prevMax[1], prevMax[2]) + right
+        };
+    }
+
+    // 현재 행에서 왼쪽 숫자, 가운데 숫자, 오른쪽 숫자를 선택했을 때의 최소 점수를 각각 계산한다.
+    private static int[] calculateCurrentMin(int rowIndex) {
+        int left = numbers[rowIndex][0];
+        int center = numbers[rowIndex][1];
+        int right = numbers[rowIndex][2];
+
+        return new int[] {
+            Math.min(prevMin[0], prevMin[1]) + left,
+            Math.min(Math.min(prevMin[0], prevMin[1]), prevMin[2]) + center,
+            Math.min(prevMin[1], prevMin[2]) + right
+        };
     }
 }
