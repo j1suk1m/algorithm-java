@@ -1,11 +1,8 @@
 class Solution {
     public String solution(String my_string, String overwrite_string, int s) {
-        char[] answer = my_string.toCharArray();
+        String left = my_string.substring(0, s);
+        String right = my_string.substring(s + overwrite_string.length(), my_string.length());
         
-        for (int i = s; i < s + overwrite_string.length(); i++) {
-            answer[i] = overwrite_string.charAt(i - s);       
-        }
-        
-        return new String(answer);
+        return left + overwrite_string + right;
     }
 }
