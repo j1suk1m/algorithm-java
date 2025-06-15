@@ -11,8 +11,7 @@ class Main {
         input();
         Arrays.sort(budgetRequests); // 예산 요청의 최댓값을 찾기 위한 오름차순 정렬
 
-        // 2. 모든 예산 요청이 배정될 수 있는지 확인
-        if (canAllocate()) {
+        if (canAllocate()) { // 2. 모든 예산 요청이 배정될 수 있는지 확인
             System.out.println(budgetRequests[N - 1]);
         } else { // 3. 이분 탐색 수행
             int low = 1;
@@ -69,7 +68,7 @@ class Main {
         int sum = 0;
 
         // mid(상한)보다 적은 예산 요청의 합 계산
-        while (budgetRequests[i] < mid) {
+        while (i < N && budgetRequests[i] < mid) {
             sum += budgetRequests[i];
             i++;
         }
