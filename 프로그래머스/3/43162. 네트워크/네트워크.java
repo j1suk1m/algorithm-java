@@ -2,38 +2,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Solution {
-    private boolean[] visited; // 방문 여부를 저장한다.
-    private final List<List<Integer>> graph = new ArrayList<>(); // 연결된 컴퓨터 번호를 저장한다.
+    private boolean[] visited;
+    private final List<List<Integer>> graph = new ArrayList<>();
     
     public int solution(int n, int[][] computers) {
-        int answer = 0;
-
-        // visited, graph를 초기화한다.
+        // 1. 방문 배열 및 그래프 초기화
         init(n);
         
-        // 연결 여부가 담긴 computers를 순회하면서 graph에 연결 정보를 저장한다. 
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                
-                // 서로 다른 컴퓨터 i와 j가 연결된 경우 양방향으로 연결 정보를 저장한다.
-                if (i != j && computers[i][j] == 1) {
-                    graph.get(i).add(j);
-                    graph.get(j).add(i);
-                }
-            }
-        }
+        // 2. 연결 관계 저장
+        link(n, computers);
         
-        // 모든 컴퓨터들을 순회하며 아직 방문하지 않은 컴퓨터에 대해 dfs를 수행한다.
-        for (int i = 0; i < n; i++) {
-            if (!visited[i]) {
-                answer += dfs(i);
-            }
-        }
-        
-        return answer;
+        // 3. DFS를 이용한 네트워크 개수 계산 후 반환
+        return calculateNetworkCount(n);
     }
     
-    // visited, graph를 초기화한다.
+    // 방문 배열 및 그래프 초기화
     private void init(int n) {
         visited = new boolean[n];
         
@@ -42,17 +25,42 @@ class Solution {
         }
     }
     
-    // dfs를 통해 하나의 네트워크로 연결된 컴퓨터들을 방문한다.
-    private int dfs(int node) {
-        visited[node] = true; // 방문 처리한다.
+    // 연결 관계 저장
+    // 방향이 없으므로 양방향으로 저장
+    private void link(int n, int[][] computers) {
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (i != j && computers[i][j] == 1) { // 서로 다른 컴퓨터 두 대가 서로 연결
+                    graph.get(i).add(j);
+                    graph.get(j).add(i);
+                }
+            }
+        }
+    }
+    
+    // 네트워크 개수 계산
+    private int calculateNetworkCount(int n) {
+        int networkCount = 0;
         
-        // 연결된 컴퓨터 중에서 아직 방문하지 않은 것을 방문한다.
-        for (int next : graph.get(node)) {
+        for (int i = 0; i < n; i++) {
+            if (!visited[i]) {
+                networkCount += dfs(i);
+            }
+        }
+        
+        return networkCount;
+    }
+    
+    // 재귀 탐색
+    private int dfs(int current) {
+        visited[current] = true; // 방문 처리
+        
+        for (int next : graph.get(current)) { // 연결된 컴퓨터 중 방문하지 않은 컴퓨터 탐색
             if (!visited[next]) {
                 dfs(next);
             }
         }
         
-        return 1; // 한 번의 dfs로 탐색한 모든 컴퓨터들은 하나의 네트워크에 있다.
+        return 1; // 재귀적으로 탐색한 경로에 있는 모든 컴퓨터는 하나의 네트워크에 속함
     }
 }
