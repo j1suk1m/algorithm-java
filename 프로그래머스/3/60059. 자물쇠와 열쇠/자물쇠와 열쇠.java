@@ -1,71 +1,81 @@
 class Solution {
-    private int[][] expandedLock; // 확장된 자물쇠 배열
-    private int[][] rotatedKey; // 회전된 열쇠 배열
-    private int N; // 자물쇠 배열 초기 크기
-    private int M; // 열쇠 배열 초기 크기
+    private int N;
+    private int M;
+    private int[][] expandedLock;
     
     public boolean solution(int[][] key, int[][] lock) {
         N = lock.length;
         M = key.length;
-        rotatedKey = key;
         
-        expandLock(lock); // 자물쇠 확장
+        // 1. lock 확장
+        expandLock(lock);
         
         for (int direction = 0; direction < 4; direction++) {
-            rotateKey(rotatedKey); // 열쇠 회전
+            // 2. key 회전
+            key = rotateKey(key);
             
-            for (int dx = 0; dx < N + M - 1; dx++) {
-                for (int dy = 0; dy < N + M - 1; dy++) {
-                    insertKey(dx, dy); // 열쇠 넣기
+            for (int i = 0; i < 2 * N; i++) {
+                for (int j = 0; j < 2 * N; j++) {
+                    // 3. key로 lock 해제 시도
+                    insertKey(key, i, j);
                     
-                    if (fits()) {
+                    // 4. 해제 가능하면 true 반환
+                    if (fits()) { 
                         return true;
-                    } else { 
-                        removeKey(dx, dy); // 열쇠 제거 -> 원상 복구
                     }
+                    
+                    // 5. lock에서 key 제거
+                    removeKey(key, i, j);
                 }
             }
         }
-        
+
+        // 6. 해제할 방법이 없으면 false 반환
         return false;
     }
     
-    // N * N 크기의 lock을 (N + 2 * (M - 1)) * (N + 2 * (M - 1)) 크기로 확장
+    // key가 lock 바깥부터 겹칠 수 있도록 lock을 3배 확장
+    // M <= N이므로 3배 확장 시 key는 전체 범위를 벗어나지 않음을 보장
     private void expandLock(int[][] lock) {
-        int expandedSize = N + 2 * (M - 1);
-        expandedLock = new int[expandedSize][expandedSize];
+        expandedLock = new int[3 * N][3 * N];
         
-        // 확장된 자물쇠 배열의 중앙에 기존 자물쇠 배열의 좌표 저장
-        for (int x = 0; x < N; x++) {
-            for (int y = 0; y < N; y++) {
-                expandedLock[x + M - 1][y + M - 1] = lock[x][y];
+        // 확장된 lock 중앙에 기존 lock의 값 저장
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                expandedLock[i + N][j + N] = lock[i][j];
             }
         }
     }
     
-    // M * M 크기의 key를 시계 방향으로 90도 회전
-    private void rotateKey(int[][] key) {
-        rotatedKey = new int[M][M];
+    // originalKey를 시계 방향으로 90도 회전
+    private int[][] rotateKey(int[][] originalKey) {
+        int[][] newKey = new int[M][M];
         
-        for (int x = 0; x < M; x++) {
-            for (int y = 0; y < M; y++) {
-                rotatedKey[y][M - 1 - x] = key[x][y]; // 기존의 (x, y) 좌표가 (y, M - 1 - x)으로 이동
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < M; j++) {
+                newKey[j][M - 1 - i] = originalKey[i][j]; // (i, j) --90도 회전--> (j, M - 1 - i)
+            }
+        }
+        
+        return newKey;
+    }
+    
+    // expandedLock과 key의 좌표 덧셈
+    // key의 좌측 상단이 expandedLock 영역 위의 (di, dj)에 위치한다고 가정
+    private void insertKey(int[][] key, int di, int dj) {
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < M; j++) {
+                expandedLock[i + di][j + dj] += key[i][j];
             }
         }
     }
     
-    private void insertKey(int dx, int dy) {
-        for (int x = 0; x < M; x++) {
-            for (int y = 0; y < M; y++) {
-                expandedLock[x + dx][y + dy] += rotatedKey[x][y]; // 좌표 덧셈
-            }
-        }
-    }
-    
+    // key로 expandedLock을 해제할 수 있는지 확인
+    // 해제할 수 있다면 기존 lock에 해당하는 중앙 부분의 모든 요소가 1이어야 함
     private boolean fits() {
-        for (int x = 0; x < N; x++) {
-            for (int y = 0; y < N; y++) {
-                if (expandedLock[x + M - 1][y + M - 1] != 1) { // 기존 자물쇠의 모든 좌표가 1이어야 함
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < N; j++) {
+                if (expandedLock[i + N][j + N] != 1) {
                     return false;
                 }
             }
@@ -74,11 +84,13 @@ class Solution {
         return true;
     }
     
-    private void removeKey(int dx, int dy) {
-        for (int x = 0; x < M; x++) {
-            for (int y = 0; y < M; y++) {
-                expandedLock[x + dx][y + dy] -= rotatedKey[x][y]; // 좌표 뺄셈
+    // expandedLock과 key의 좌표 뺄셈
+    // key의 좌측 상단이 expandedLock 영역 위의 (di, dj)에 위치한다고 가정
+    private void removeKey(int[][] key, int di, int dj) {
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < M; j++) {
+                expandedLock[i + di][j + dj] -= key[i][j];
             }
-        }        
+        }
     }
 }
