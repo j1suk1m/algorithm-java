@@ -7,15 +7,12 @@ class Solution {
     public boolean solution(int[][] key, int[][] lock) {
         N = lock.length;
         M = key.length;
-        
-        // 자물쇠 확장
-        expandLock(lock);
-        
         rotatedKey = key;
         
+        expandLock(lock); // 자물쇠 확장
+        
         for (int direction = 0; direction < 4; direction++) {
-            // 열쇠 회전
-            rotateKey(rotatedKey);
+            rotateKey(rotatedKey); // 열쇠 회전
             
             for (int dx = 0; dx < N + M - 1; dx++) {
                 for (int dy = 0; dy < N + M - 1; dy++) {
