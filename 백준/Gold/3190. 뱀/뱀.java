@@ -2,29 +2,35 @@ import java.util.*;
 import java.io.*;
 
 enum Direction {
-    RIGHT(0),
-    DOWN(1),
-    LEFT(2),
-    UP(3);
+    RIGHT(0, 0, 1),
+    DOWN(1, 1, 0),
+    LEFT(2, 0, -1),
+    UP(3, -1, 0);
 
     private final int code;
+    private final int dr; // delta of row // 행 방향의 변화량
+    private final int dc; // delta of col // 열 방향의 변화량
 
-    Direction(int code) {
+    Direction(int code, int dr, int dc) {
         this.code = code;
+        this.dr = dr;
+        this.dc = dc;
     }
 
-    public int getCode() {
-        return code;
+    public int getDr() {
+        return dr;
     }
 
-    // 오른쪽으로 90도 회전
+    public int getDc() {
+        return dc;
+    }
+
     public Direction turnRight() {
         return Direction.values()[(this.code + 1) % 4];
     }
 
-    // 왼쪽으로 90도 회전
     public Direction turnLeft() {
-        return Direction.values()[(this.code + 3) % 4]; 
+        return Direction.values()[(this.code + 3) % 4];
     }
 }
 
@@ -43,6 +49,10 @@ class Position {
 
     public int getCol() {
         return col;
+    }
+
+    public Position getNextPosition(Direction direction) {
+        return new Position(this.row + direction.getDr(), this.col + direction.getDc());
     }
 }
 
@@ -87,7 +97,7 @@ class Main {
 
         while (true) {           
             // 다음 머리 위치 계산
-            Position nextHeadPosition = getNextHeadPosition(head, direction);
+            Position nextHeadPosition = head.getNextPosition(direction);
 
             // 다음 머리 위치가 유효한지 확인
             if (!isValidPosition(nextHeadPosition)) {
@@ -116,7 +126,7 @@ class Main {
         System.out.println(time);
     }
 
-    // 벽에 해당되는 위치에 WALL(-1) 저장
+    // 벽이 있는 위치에 WALL(-1) 저장
     private static void markWalls() {
         for (int row = 0; row < N + 2; row++) {
             for (int col = 0; col < N + 2; col++) {
@@ -139,7 +149,7 @@ class Main {
         }
     }
 
-    // 방향 변환 정보 directionChanges 맵에 저장
+    // directionChanges 맵에 방향 변환 정보 저장
     // key = 방향 변환 시점, value = 변환될 방향
     private static void initDirectionChanges() throws IOException {
         for (int i = 0; i < L; i++) {
@@ -152,41 +162,17 @@ class Main {
         }
     }
 
+    // 뱀 머리 이동
     private static void move(Position head) {
         board[head.getRow()][head.getCol()] = SNAKE;
         snakePositions.addFirst(head);
     }
 
-    // 현재 머리 위치와 방향을 기반으로 다음 머리 위치 계산 후 반환
-    private static Position getNextHeadPosition(Position head, Direction direction) {
-        int headRow = head.getRow();
-        int headCol = head.getCol();
-        
-        switch(direction) {
-            case RIGHT:
-                return new Position(headRow, headCol + 1);
-            case DOWN:
-                return new Position(headRow + 1, headCol);
-            case LEFT:
-                return new Position(headRow, headCol - 1);
-            default: // UP
-                return new Position(headRow - 1, headCol);
-        }
-    }
-
     // 전달된 position이 유효한 위치인지 확인
     // 벽이나 몸에 닿은 경우 false, 그 외의 경우 true 반환
     private static boolean isValidPosition(Position position) {
-        int row = position.getRow();
-        int col = position.getCol();
-        
-        if (board[row][col] == WALL) {
-            return false;
-        } else if (board[row][col] == SNAKE) {
-            return false;
-        } else {
-            return true;
-        }
+        int value = board[position.getRow()][position.getCol()];
+        return value != WALL && value != SNAKE;
     }
 
     // 전달된 position에 사과가 놓여 있는지 확인
