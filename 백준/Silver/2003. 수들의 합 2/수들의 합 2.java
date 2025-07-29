@@ -8,45 +8,38 @@ public class Main {
 		StringTokenizer st = new StringTokenizer(br.readLine(), " ");
 		
 		int N = Integer.parseInt(st.nextToken()); // 수열의 길이
-		int M = Integer.parseInt(st.nextToken()); // 타겟
+		int M = Integer.parseInt(st.nextToken()); // 부분 수열의 합으로 만들고자 하는 타겟
 		
-		int[] A = new int[N];
+		int[] A = new int[N]; // 수열
 		
 		st = new StringTokenizer(br.readLine(), " ");
 		
-		// 수열 입력
-		for (int i = 0; i < N; i++) {
+		for (int i = 0; i < N; i++) { // 수열 입력
 			A[i] = Integer.parseInt(st.nextToken());
 		}
 		
 		int left = 0;
 		int right = 0;
-		int answer = 0; // 수들의 합으로 M을 만들 수 있는 경우의 수
+		int sum = A[0]; // 부분 수열의 합 // A[left] + ... + A[right]
+		int answer = 0; // 부분 수열의 합이 M이 되는 경우의 수
 		
-		while (right < N) {
-			int sum = calculateSum(A, left, right); // A[left]부터 A[right]까지의 합 계산
-			
-			if (sum == M) {
+		while (left < N) { // 투 포인터 알고리즘 수행
+			if (sum == M) { // 부분 수열의 합으로 M을 만들 수 있는 경우
 				answer++;
+				sum -= A[left];
+				left++;
+			} else if (sum < M) { // 부분 수열의 합이 M보다 작은 경우 -> 부분 수열을 늘림
 				right++;
-			} else if (sum < M) { // M을 만들기 위해 전체 합을 늘려야 하므로 right를 증가시킴
-				right++;
-			} else { // M을 만들기 위해 전체 합을 줄여야 하므로 left를 증가시킴
+				
+				if (right >= N) break;
+				
+				sum += A[right];
+			} else { // 부분 수열의 합이 M보다 큰 경우 -> 부분 수열을 줄임
+				sum -= A[left];
 				left++;
 			}
 		}
 		
 		System.out.println(answer);
-	}
-	
-	// nums[from]부터 nums[to]까지의 합 계산
-	private static int calculateSum(int[] nums, int from, int to) {
-		int sum = 0;
-		
-		for (int i = from; i <= to; i++) {
-			sum += nums[i];
-		}
-		
-		return sum;
 	}
 }
