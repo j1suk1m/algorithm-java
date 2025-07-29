@@ -1,7 +1,6 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.function.IntBinaryOperator;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -24,8 +23,8 @@ public class Main {
 
         for (int rowIndex = 1; rowIndex < rows; rowIndex++) {
             // 현재 행에서 왼쪽 숫자, 가운데 숫자, 오른쪽 숫자를 선택했을 때의 최대 및 최소 점수를 계산한다.
-            int[] currMax = calculateCurrentRow(rowIndex, prevMax, Math::max);
-            int[] currMin = calculateCurrentRow(rowIndex, prevMin, Math::min);
+            int[] currMax = calculateCurrentMax(rowIndex);
+            int[] currMin = calculateCurrentMin(rowIndex);
 
             // 다음 행으로 이동하기 위해 배열을 갱신한다.
             // 다음 루프에서 currMax, currMin이 초기화되므로 배열의 메모리 주소를 넘겨도 된다.
@@ -50,16 +49,29 @@ public class Main {
         }
     }
 
-    // 현재 행에서 왼쪽 숫자, 가운데 숫자, 오른쪽 숫자를 선택했을 때의 최대 또는 최소 점수를 계산한다.
-    private static int[] calculateCurrentRow(int rowIndex, int[] prevRow, IntBinaryOperator op) {
+    // 현재 행에서 왼쪽 숫자, 가운데 숫자, 오른쪽 숫자를 선택했을 때의 최대 점수를 각각 계산한다.
+    private static int[] calculateCurrentMax(int rowIndex) {
         int left = numbers[rowIndex][0];
         int center = numbers[rowIndex][1];
         int right = numbers[rowIndex][2];
 
         return new int[] {
-            op.applyAsInt(prevRow[0], prevRow[1]) + left,
-            op.applyAsInt(op.applyAsInt(prevRow[0], prevRow[1]), prevRow[2]) + center,
-            op.applyAsInt(prevRow[1], prevRow[2]) + right
+            Math.max(prevMax[0], prevMax[1]) + left,
+            Math.max(Math.max(prevMax[0], prevMax[1]), prevMax[2]) + center,
+            Math.max(prevMax[1], prevMax[2]) + right
+        };
+    }
+
+    // 현재 행에서 왼쪽 숫자, 가운데 숫자, 오른쪽 숫자를 선택했을 때의 최소 점수를 각각 계산한다.
+    private static int[] calculateCurrentMin(int rowIndex) {
+        int left = numbers[rowIndex][0];
+        int center = numbers[rowIndex][1];
+        int right = numbers[rowIndex][2];
+
+        return new int[] {
+            Math.min(prevMin[0], prevMin[1]) + left,
+            Math.min(Math.min(prevMin[0], prevMin[1]), prevMin[2]) + center,
+            Math.min(prevMin[1], prevMin[2]) + right
         };
     }
 }
