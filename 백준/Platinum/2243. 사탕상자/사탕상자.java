@@ -2,115 +2,80 @@ import java.util.*;
 import java.io.*;
 
 class Main {
-    static final int TAKE_OUT = 1;
-    static final int MIN_TASTE = 1;
-    static final int MAX_TASTE = (int) 1e6;
+    static int n; // 전체 연산 횟수, [1, 1e5]
+    static final int QUERY = 1; // 사탕 상자에서 특정 순위의 사탕을 꺼내는 연산
+    static final int UPDATE = 2; // 사탕 상자에 특정 맛의 사탕 몇 개를 넣거나 빼는 연산
     static final int ROOT = 1;
+    static final int MIN_TASTE = 1;
+    static final int MAX_TASTE = 1_000_000;
     static int[] tree;
-    static final StringBuilder answer = new StringBuilder();
     
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = null;
+        StringBuilder sb = new StringBuilder();
 
-        int n = Integer.parseInt(br.readLine()); // 쿼리 횟수
-       
-        initTree();
-        buildTree(ROOT, MIN_TASTE, MAX_TASTE);
+        n = Integer.parseInt(br.readLine()); // 전체 연산 횟수
 
-        while (n-- > 0) {
+        tree = new int[4 * (MAX_TASTE + 1)]; // 세그먼트 트리 생성
+
+        for (int i = 0; i < n; i++) {
             st = new StringTokenizer(br.readLine());
-
-            int command = Integer.parseInt(st.nextToken());
             int taste = 0;
-            int count = 0;
+            int count = -1;
 
-            if (command == TAKE_OUT) {
-                int rank = Integer.parseInt(st.nextToken()); // 꺼낼 사탕의 순위
-                taste = findKthTaste(ROOT, MIN_TASTE, MAX_TASTE, rank); // 해당 순위의 사탕의 맛 계산
-                count = -1;
-                answer.append(taste).append("\n");
-            } else { 
-                taste = Integer.parseInt(st.nextToken()); // 사탕의 맛
-                count = Integer.parseInt(st.nextToken()); // 사탕의 개수
-            } 
-            
-            updateCount(ROOT, MIN_TASTE, MAX_TASTE, taste, count);
+            int command = Integer.parseInt(st.nextToken()); // 연산
+
+            if (command == QUERY) {
+                int rank = Integer.parseInt(st.nextToken());
+                taste = findTasteWithRank(ROOT, MIN_TASTE, MAX_TASTE, rank); // 해당 순위의 사탕의 맛 계산
+                sb.append(taste).append("\n");
+            } else if (command == UPDATE) {
+                taste = Integer.parseInt(st.nextToken());
+                count = Integer.parseInt(st.nextToken());
+            }
+
+            update(ROOT, MIN_TASTE, MAX_TASTE, taste, count);
         }
 
-        System.out.println(answer);
-    }
+        bw.write(sb.toString());
+        bw.flush();
 
-    static int getTreeSize() {
-        int height = (int) Math.ceil(Math.log(MAX_TASTE + 1) / Math.log(2));
-        int treeSize = (1 << (height + 1));
-        return treeSize;
-    }
-
-    static void initTree() {
-         tree = new int[getTreeSize()];
-    }
-
-    static int getLeftChild(int node) {
-        return node * 2;
-    }
-
-    static int getRightChild(int node) {
-        return node * 2 + 1;
+        br.close();
+        bw.close();
     }
 
     static int getMiddle(int start, int end) {
         return start + (end - start) / 2;
     }
 
-    static void buildTree(int node, int startTaste, int endTaste) {
-        if (startTaste == endTaste) {
-            tree[node] = 0; // 초기 사탕 개수
-            return;
-        }
+    static int findTasteWithRank(int node, int start, int end, int rank) {
+        if (start == end) return start;
 
-        int leftChild = getLeftChild(node);
-        int rightChild = getRightChild(node);
-        int middle = getMiddle(startTaste, endTaste);
+        int middle = getMiddle(start, end);
 
-        buildTree(leftChild, startTaste, middle);
-        buildTree(rightChild, middle + 1, endTaste);
-
-        tree[node] = tree[leftChild] + tree[rightChild];
-    }
-
-    static int findKthTaste(int node, int startTaste, int endTaste, int K) {
-        if (startTaste == endTaste) {
-            return startTaste;
-        }
-
-        int leftChild = getLeftChild(node);
-        int rightChild = getRightChild(node);
-        int middle = getMiddle(startTaste, endTaste);
-        
-        if (K <= tree[leftChild]) {
-            return findKthTaste(leftChild, startTaste, middle, K);
+        if (rank <= tree[node * 2]) {
+            return findTasteWithRank(node * 2, start, middle, rank);
         } else {
-            return findKthTaste(rightChild, middle + 1, endTaste, K - tree[leftChild]);
+            return findTasteWithRank(node * 2 + 1, middle + 1, end, rank - tree[node * 2]);
         }
     }
 
-    static void updateCount(int node, int startTaste, int endTaste, int targetTaste, int deltaCount) {
-        if (startTaste == endTaste) {
-            tree[node] += deltaCount;
+    static void update(int node, int start, int end, int taste, int count) {
+        if (start == end) {
+            tree[node] += count;
             return;
         }
-    
-        int leftChild = getLeftChild(node);
-        int rightChild = getRightChild(node);
-        int middle = getMiddle(startTaste, endTaste);
-    
-        if (targetTaste <= middle) {
-            updateCount(leftChild, startTaste, middle, targetTaste, deltaCount);
+       
+        int middle = getMiddle(start, end);
+
+        if (taste <= middle) {
+            update(node * 2, start, middle, taste, count);
         } else {
-            updateCount(rightChild, middle + 1, endTaste, targetTaste, deltaCount);
+            update(node * 2 + 1, middle + 1, end, taste, count);
         }
-    
-        tree[node] = tree[leftChild] + tree[rightChild]; 
+
+        tree[node] = tree[node * 2] + tree[node * 2 + 1];
     }
 }
