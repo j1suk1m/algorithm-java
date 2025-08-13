@@ -1,16 +1,6 @@
 import java.util.*;
 import java.io.*;
 
-class Point {
-    int x;
-    int y;
-
-    Point(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-}
-
 class Main {
     static final String EOF = "0 0";
     static int w; // 지도의 너비, [1, 50]
@@ -62,7 +52,7 @@ class Main {
         for (int i = 0; i < h; i++) {
             for (int j = 0; j < w; j++) {
                 if (map[i][j] == LAND) {
-                    visitIsland(new Point(i, j));
+                    visitIsland(i, j);
                     count++;
                 }
             }
@@ -71,25 +61,17 @@ class Main {
         return count;
     }
 
-    static void visitIsland(Point start) {
-        Deque<Point> queue = new ArrayDeque<>();
+    static void visitIsland(int x, int y) {
+        map[x][y] = SEA; // 방문 처리
 
-        queue.add(start);
-        map[start.x][start.y] = SEA; // 방문 처리
+        for (int[] move : moves) {
+            int nx = x + move[0];
+            int ny = y + move[1];
 
-        while (!queue.isEmpty()) {
-            Point now = queue.poll();
+            if (nx < 0 || nx >= h || ny < 0 || ny >= w) continue;
+            if (map[nx][ny] == SEA) continue;
 
-            for (int[] move : moves) {
-                int nx = now.x + move[0];
-                int ny = now.y + move[1];
-
-                if (nx < 0 || nx >= h || ny < 0 || ny >= w) continue;
-                if (map[nx][ny] == SEA) continue;
-
-                queue.add(new Point(nx, ny));
-                map[nx][ny] = SEA; // 방문 처리
-            }
+            visitIsland(nx, ny);
         }
     }
 }
