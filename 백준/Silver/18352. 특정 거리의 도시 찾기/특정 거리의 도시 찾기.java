@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.stream.Collectors;
 import java.io.*;
 
 class Main {
@@ -8,13 +7,13 @@ class Main {
     static int K; // 거리 정보, [1, 3 * 1e5]
     static int X; // 출발 도시의 번호, [1, N]
     static final List<List<Integer>> graph = new ArrayList<>(); // 인접 리스트
-    static final List<Integer> answer = new ArrayList<>();
+    static int[] distances;
     
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        String output = null;
+        StringBuilder sb = new StringBuilder();
         
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
@@ -24,6 +23,9 @@ class Main {
         for (int i = 0; i <= N; i++) {
             graph.add(new ArrayList<>());
         }
+
+        distances = new int[N + 1];
+        Arrays.fill(distances, K + 1);
 
         // 단방향 연결 관계 저장
         for (int i = 0; i < M; i++) {
@@ -35,42 +37,36 @@ class Main {
             graph.get(src).add(dest);
         }
 
-        runBfs(X);
+        runDijkstra(X);
 
-        answer.sort((a, b) -> Integer.compare(a, b));
-
-        if (answer.size() > 0) {
-            output = answer.stream()
-                           .map(String::valueOf)
-                           .collect(Collectors.joining("\n"));
-        } else {
-            output = "-1";
+        for (int i = 1 ; i <= N; i++) {
+            if (distances[i] == K) {
+                sb.append(i).append("\n");
+            }
         }
         
-        bw.write(output);
+        bw.write(sb.length() == 0 ? "-1" : sb.toString());
         bw.flush();
 
         br.close();
         bw.close();
     }
 
-    static void runBfs(int start) {
-        Deque<Node> queue = new ArrayDeque<>();
-        boolean[] visited = new boolean[N + 1];
-        
-        queue.add(new Node(start, 0));
-        visited[start] = true;
+    static void runDijkstra(int start) {
+        PriorityQueue<Node> pq = new PriorityQueue<>((v1, v2) -> Integer.compare(v1.dist, v2.dist));
 
-        while (!queue.isEmpty()) {
-            Node curr = queue.poll();
+        distances[start] = 0;
+        pq.add(new Node(start, 0));
 
-            if (curr.dist == K) answer.add(curr.value);
-            if (curr.dist > K) break;
-        
+        while (!pq.isEmpty()) {
+            Node curr = pq.poll();
+
+            if (distances[curr.value] < curr.dist) continue;
+
             for (int next : graph.get(curr.value)) {
-                if (!visited[next]) {
-                    queue.add(new Node(next, curr.dist + 1));
-                    visited[next] = true;
+                if (distances[next] > distances[curr.value] + 1) {
+                    distances[next] = distances[curr.value] + 1;
+                    pq.add(new Node(next, distances[next]));
                 }
             }
         }
