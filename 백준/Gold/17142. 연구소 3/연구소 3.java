@@ -85,6 +85,10 @@ class Main {
                     return curr.time;
                 }
             }
+            
+            if (curr.time > minTime) {
+                return curr.time;
+            }
 
             for (int[] move : moves) {
                 int nx = curr.x + move[0];
